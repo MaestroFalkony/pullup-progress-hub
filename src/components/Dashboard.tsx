@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { NeumorphicCard } from '@/components/ui/neumorphic-card';
 import { StatsCard } from '@/components/ui/stats-card';
-import { ProgressRing } from '@/components/ui/progress-ring';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
+import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
 
 interface DashboardProps {
   onStartWorkout: () => void;
@@ -12,16 +12,16 @@ interface DashboardProps {
 
 export const Dashboard = ({ onStartWorkout }: DashboardProps) => {
   const [isConnected, setIsConnected] = useState(true);
-  const [currentStrength, setCurrentStrength] = useState(85);
+  const [currentStrength, setCurrentStrength] = useState(550);
 
   // Simulate real-time data updates
-  useEffect(() => {
+useEffect(() => {
     const interval = setInterval(() => {
       setCurrentStrength(prev => {
-        const change = (Math.random() - 0.5) * 10;
-        return Math.max(70, Math.min(100, prev + change));
+        const change = (Math.random() - 0.5) * 60;
+        return Math.max(0, Math.min(900, prev + change));
       });
-    }, 2000);
+    }, 1000);
 
     return () => clearInterval(interval);
   }, []);
@@ -52,7 +52,7 @@ export const Dashboard = ({ onStartWorkout }: DashboardProps) => {
             <h3 className="text-xl font-bold text-foreground">Текущее состояние</h3>
             <div className="flex items-center space-x-4">
               <div className="text-sm text-muted-foreground">
-                Сила хвата: <span className="font-bold text-primary">{currentStrength.toFixed(1)}%</span>
+                Сила хвата: <span className="font-bold text-primary">{Math.round(currentStrength)} N</span>
               </div>
               <div className="text-sm text-muted-foreground">
                 Вес: <span className="font-bold">75 кг</span>
@@ -75,8 +75,8 @@ export const Dashboard = ({ onStartWorkout }: DashboardProps) => {
         />
         <StatsCard
           title="Максимальная сила"
-          value={92}
-          unit="%"
+          value={620}
+          unit="N"
           change={5}
           icon="⚡"
         />
@@ -97,16 +97,32 @@ export const Dashboard = ({ onStartWorkout }: DashboardProps) => {
       </div>
 
       {/* Weekly Progress */}
-      <NeumorphicCard className="p-6">
-        <h3 className="text-xl font-bold text-foreground mb-4">Прогресс недели</h3>
-        <div className="flex justify-center">
-          <ProgressRing progress={68} size={200}>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-primary">68%</div>
-              <div className="text-sm text-muted-foreground">от цели</div>
-              <div className="text-xs text-muted-foreground">170/250 подтягиваний</div>
-            </div>
-          </ProgressRing>
+<NeumorphicCard className="p-6">
+        <h3 className="text-xl font-bold text-foreground mb-4">Активность за 7 дней</h3>
+        <div className="h-40">
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart data={[
+              { day: 'Пн', reps: 20 },
+              { day: 'Вт', reps: 24 },
+              { day: 'Ср', reps: 18 },
+              { day: 'Чт', reps: 30 },
+              { day: 'Пт', reps: 22 },
+              { day: 'Сб', reps: 12 },
+              { day: 'Вс', reps: 15 },
+            ]}>
+              <defs>
+                <linearGradient id="colorReps" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3}/>
+                  <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0.05}/>
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--muted))" />
+              <XAxis dataKey="day" stroke="hsl(var(--muted-foreground))" />
+              <YAxis stroke="hsl(var(--muted-foreground))" />
+              <Tooltip />
+              <Area type="monotone" dataKey="reps" stroke="hsl(var(--primary))" fillOpacity={1} fill="url(#colorReps)" />
+            </AreaChart>
+          </ResponsiveContainer>
         </div>
       </NeumorphicCard>
 

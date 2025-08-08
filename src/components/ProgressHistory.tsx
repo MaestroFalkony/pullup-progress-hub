@@ -4,6 +4,8 @@ import { StatsCard } from '@/components/ui/stats-card';
 import { ProgressRing } from '@/components/ui/progress-ring';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, BarChart, Bar } from 'recharts';
 
 export const ProgressHistory = () => {
   const weeklyData = [
@@ -32,11 +34,116 @@ export const ProgressHistory = () => {
 
   return (
     <div className="min-h-screen p-6 space-y-6">
-      {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold text-foreground">История прогресса</h1>
-        <p className="text-muted-foreground">Отслеживайте свои достижения</p>
-      </div>
+      {/* Metrics Charts */}
+      <NeumorphicCard className="p-6">
+        <h3 className="text-xl font-bold text-foreground mb-4">Ключевые метрики</h3>
+        <Tabs defaultValue="weight" className="w-full">
+          <TabsList className="grid grid-cols-3 gap-2 mb-4">
+            <TabsTrigger value="weight">Вес</TabsTrigger>
+            <TabsTrigger value="reps">Подтягивания</TabsTrigger>
+            <TabsTrigger value="grip">Сила хвата (N)</TabsTrigger>
+            <TabsTrigger value="explosive">Взрывная сила (dF/dt)</TabsTrigger>
+            <TabsTrigger value="hang">Время виса</TabsTrigger>
+            <TabsTrigger value="pullupTime">Время подтягивания</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="weight">
+            <div className="h-44">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={[
+                  { d: 'Пн', kg: 75 }, { d: 'Вт', kg: 75.2 }, { d: 'Ср', kg: 75.1 }, { d: 'Чт', kg: 74.9 }, { d: 'Пт', kg: 75 }, { d: 'Сб', kg: 75.3 }, { d: 'Вс', kg: 75.2 },
+                ]}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--muted))" />
+                  <XAxis dataKey="d" stroke="hsl(var(--muted-foreground))" />
+                  <YAxis domain={[70, 80]} stroke="hsl(var(--muted-foreground))" />
+                  <Tooltip formatter={(v: any) => [`${v} кг`, 'Вес']} />
+                  <Line type="monotone" dataKey="kg" stroke="hsl(var(--primary))" dot={false} />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="reps">
+            <div className="h-44">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={[
+                  { set: 'П1', reps: 10 }, { set: 'П2', reps: 8 }, { set: 'П3', reps: 6 }, { set: 'П4', reps: 5 },
+                ]}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--muted))" />
+                  <XAxis dataKey="set" stroke="hsl(var(--muted-foreground))" />
+                  <YAxis stroke="hsl(var(--muted-foreground))" />
+                  <Tooltip formatter={(v: any) => [`${v}`, 'Повторения']} />
+                  <Bar dataKey="reps" fill="hsl(var(--primary))" radius={[8,8,0,0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="grip">
+            <div className="h-44">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={[
+                  { t: 'Пн', N: 540 }, { t: 'Вт', N: 560 }, { t: 'Ср', N: 520 }, { t: 'Чт', N: 600 }, { t: 'Пт', N: 580 }, { t: 'Сб', N: 510 }, { t: 'Вс', N: 530 },
+                ]}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--muted))" />
+                  <XAxis dataKey="t" stroke="hsl(var(--muted-foreground))" />
+                  <YAxis domain={[0, 900]} stroke="hsl(var(--muted-foreground))" />
+                  <Tooltip formatter={(v: any) => [`${v} N`, 'Сила хвата']} />
+                  <Line type="monotone" dataKey="N" stroke="hsl(var(--primary))" dot={false} />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="explosive">
+            <div className="h-44">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={[
+                  { t: 'Пн', dFdt: 1200 }, { t: 'Вт', dFdt: 1400 }, { t: 'Ср', dFdt: 1100 }, { t: 'Чт', dFdt: 1600 }, { t: 'Пт', dFdt: 1500 }, { t: 'Сб', dFdt: 1000 }, { t: 'Вс', dFdt: 1150 },
+                ]}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--muted))" />
+                  <XAxis dataKey="t" stroke="hsl(var(--muted-foreground))" />
+                  <YAxis domain={[0, 2000]} stroke="hsl(var(--muted-foreground))" />
+                  <Tooltip formatter={(v: any) => [`${v} N/s`, 'dF/dt']} />
+                  <Line type="monotone" dataKey="dFdt" stroke="hsl(var(--primary))" dot={false} />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="hang">
+            <div className="h-44">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={[
+                  { set: 'П1', sec: 20 }, { set: 'П2', sec: 18 }, { set: 'П3', sec: 22 }, { set: 'П4', sec: 15 },
+                ]}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--muted))" />
+                  <XAxis dataKey="set" stroke="hsl(var(--muted-foreground))" />
+                  <YAxis stroke="hsl(var(--muted-foreground))" />
+                  <Tooltip formatter={(v: any) => [`${v} с`, 'Время виса']} />
+                  <Bar dataKey="sec" fill="hsl(var(--primary))" radius={[8,8,0,0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="pullupTime">
+            <div className="h-44">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={[
+                  { set: 'П1', sec: 8.2 }, { set: 'П2', sec: 7.8 }, { set: 'П3', sec: 9.1 }, { set: 'П4', sec: 8.6 },
+                ]}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--muted))" />
+                  <XAxis dataKey="set" stroke="hsl(var(--muted-foreground))" />
+                  <YAxis stroke="hsl(var(--muted-foreground))" />
+                  <Tooltip formatter={(v: any) => [`${v} с`, 'Время/подтягивание']} />
+                  <Bar dataKey="sec" fill="hsl(var(--primary))" radius={[8,8,0,0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </TabsContent>
+        </Tabs>
+      </NeumorphicCard>
 
       {/* Current Month Summary */}
       <div className="grid grid-cols-2 gap-4">
@@ -143,9 +250,9 @@ export const ProgressHistory = () => {
             <span className="text-muted-foreground">Максимум за день</span>
             <span className="font-bold text-primary">30 подтягиваний</span>
           </div>
-          <div className="flex justify-between items-center">
+<div className="flex justify-between items-center">
             <span className="text-muted-foreground">Максимальная сила</span>
-            <span className="font-bold text-primary">92%</span>
+            <span className="font-bold text-primary">620 N</span>
           </div>
           <div className="flex justify-between items-center">
             <span className="text-muted-foreground">Лучшее время/повтор</span>
